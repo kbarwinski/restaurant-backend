@@ -2,6 +2,7 @@ package pl.barwinski.restaurantbackend.core.product;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +30,8 @@ public class ProductController{
     @RequestMapping(method= RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<ProductDto>> getProducts() {
-        List<ProductEntity> projects = productService.getAll();
-        return ResponseEntity.ok(productMapper.mapToDto(projects));
+        Page<ProductEntity> projects = productService.getAll();
+
+        return ResponseEntity.ok(productMapper.mapToDto(projects.toList()));
     }
 }

@@ -1,8 +1,11 @@
 package pl.barwinski.restaurantbackend.core.product;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -16,8 +19,8 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public List<ProductEntity> getAll() {
-        return productRepository.findAll();
+    public Page<ProductEntity> getAll() {
+        return productRepository.findAll(PageRequest.of(0,1));
     }
 
     public ProductEntity getById(Long id) {

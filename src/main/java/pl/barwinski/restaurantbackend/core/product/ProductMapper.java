@@ -1,6 +1,7 @@
 package pl.barwinski.restaurantbackend.core.product;
 
 import org.mapstruct.Mapper;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
