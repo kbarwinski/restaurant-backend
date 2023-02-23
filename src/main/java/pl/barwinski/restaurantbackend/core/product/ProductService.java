@@ -3,11 +3,13 @@ package pl.barwinski.restaurantbackend.core.product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,8 +21,12 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Page<ProductEntity> getAll() {
-        return productRepository.findAll(PageRequest.of(0,1));
+    public Page<ProductEntity> getByNameContainingAndPriceBetween(String name, Optional<BigDecimal> minPrice, Optional<BigDecimal> maxPrice, Pageable pageable){
+
+        BigDecimal min = minPrice.orElse(BigDecimal.valueOf(0));
+        BigDecimal max = maxPrice.orElse(productRepository.findMaxProductPrice());
+
+        return productRepository.findByNameContainingAndPriceBetween(name, min, max, pageable);
     }
 
     public ProductEntity getById(Long id) {
