@@ -23,18 +23,16 @@ public class AddressEntity {
 
     @NotBlank
     @NotNull
-    @Length(max = 255)
-    private String name;
+    private int apt_number;
 
     @NotBlank
     @NotNull
     @Length(max = 255)
-    private String surname;
+    private String street_name;
 
     @NotBlank
     @NotNull
-    @Length(max = 20)
-    private String phoneNumber;
+    private int street_number;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user.id")

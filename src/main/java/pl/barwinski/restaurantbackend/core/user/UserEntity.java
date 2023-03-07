@@ -10,7 +10,9 @@ import pl.barwinski.restaurantbackend.core.address.AddressEntity;
 import pl.barwinski.restaurantbackend.core.contact.ContactEntity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -45,14 +47,9 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    @NotBlank
-    @NotNull
-    @Length(max = 255)
-    private String imageUrl;
-
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private ContactEntity contact;
 
     @OneToMany(mappedBy = "user")
-    private Set<AddressEntity> addresses =  new HashSet<>();
+    private List<AddressEntity> addresses =  new ArrayList<>();
 }
