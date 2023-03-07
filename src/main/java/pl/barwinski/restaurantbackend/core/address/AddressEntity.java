@@ -1,4 +1,4 @@
-package pl.barwinski.restaurantbackend.core.product;
+package pl.barwinski.restaurantbackend.core.address;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -6,22 +6,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
-
-import java.math.BigDecimal;
+import pl.barwinski.restaurantbackend.core.user.UserEntity;
 
 @Getter
 @Setter
 @Entity
 @Builder
-@Table(name = "products")
+@Table(name = "addresses")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductEntity {
-
-    public enum Category{
-        MAIN_DISH, SOUP, SIDE_DISH, DESSERT, BEVERAGE, ALC_BEVERAGE
-    }
-
+public class AddressEntity {
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,19 +28,15 @@ public class ProductEntity {
 
     @NotBlank
     @NotNull
-    @Length(max = 1000)
-    private String description;
-
-    @Enumerated(EnumType.STRING)
-    private Category category;
+    @Length(max = 255)
+    private String surname;
 
     @NotBlank
     @NotNull
-    @Length(max = 255)
-    private String imageUrl;
+    @Length(max = 20)
+    private String phoneNumber;
 
-    @NotNull
-    @Min(0)
-    private BigDecimal price;
-
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user.id")
+    private UserEntity user;
 }

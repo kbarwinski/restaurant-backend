@@ -1,4 +1,4 @@
-package pl.barwinski.restaurantbackend.core.product;
+package pl.barwinski.restaurantbackend.core.user;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -6,20 +6,24 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import pl.barwinski.restaurantbackend.core.address.AddressEntity;
+import pl.barwinski.restaurantbackend.core.contact.ContactEntity;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @Entity
 @Builder
-@Table(name = "products")
+@Table(name = "users")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductEntity {
+public class UserEntity {
 
-    public enum Category{
-        MAIN_DISH, SOUP, SIDE_DISH, DESSERT, BEVERAGE, ALC_BEVERAGE
+    public enum UserRole{
+        GUEST, CLIENT, EMPLOYEE, ADMINISTRATOR
     }
 
     @Setter(AccessLevel.NONE)
@@ -30,23 +34,25 @@ public class ProductEntity {
     @NotBlank
     @NotNull
     @Length(max = 255)
-    private String name;
+    @Length(max = 255)
+    private String email;
 
     @NotBlank
     @NotNull
     @Length(max = 1000)
-    private String description;
+    private String password;
 
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private UserRole userRole;
 
     @NotBlank
     @NotNull
     @Length(max = 255)
     private String imageUrl;
 
-    @NotNull
-    @Min(0)
-    private BigDecimal price;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private ContactEntity contact;
 
+    @OneToMany(mappedBy = "user")
+    private Set<AddressEntity> addresses =  new HashSet<>();
 }
