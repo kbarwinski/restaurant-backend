@@ -24,7 +24,7 @@ public class ProductService {
     public Page<ProductEntity> getByNameContainingAndPriceBetween(String name, Optional<BigDecimal> minPrice, Optional<BigDecimal> maxPrice, Pageable pageable){
 
         BigDecimal min = minPrice.orElse(BigDecimal.valueOf(0));
-        BigDecimal max = maxPrice.orElse(productRepository.findMaxProductPrice());
+        BigDecimal max = maxPrice.orElse(BigDecimal.valueOf(1000000));
 
         return productRepository.findByNameContainingAndPriceBetween(name, min, max, pageable);
     }
