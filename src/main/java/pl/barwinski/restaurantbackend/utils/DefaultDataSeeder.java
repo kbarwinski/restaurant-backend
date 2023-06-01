@@ -19,10 +19,7 @@ import pl.barwinski.restaurantbackend.core.user.UserService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Configuration
@@ -210,6 +207,7 @@ public class DefaultDataSeeder implements CommandLineRunner {
 
         OrderEntity order1 = OrderEntity.builder()
                 .orderDate(LocalDateTime.now())
+                .publicId(UUID.randomUUID())
                 .totalPrice(orderItem1.getPrice().add(orderItem2.getPrice()))
                 .status(OrderEntity.OrderStatus.IN_PROGRESS)
                 .build();
@@ -225,6 +223,7 @@ public class DefaultDataSeeder implements CommandLineRunner {
 
         OrderEntity order2 = OrderEntity.builder()
                 .orderDate(LocalDateTime.now())
+                .publicId(UUID.randomUUID())
                 .totalPrice(orderItem3.getPrice().add(orderItem4.getPrice()))
                 .status(OrderEntity.OrderStatus.IN_PROGRESS)
                 .build();

@@ -1,5 +1,6 @@
 package pl.barwinski.restaurantbackend.core.orderitem;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.barwinski.restaurantbackend.core.product.ProductEntity;
@@ -24,6 +25,7 @@ public class OrderItemService {
         orderItemRepository.deleteById(id);
     }
 
+    @Transactional
     public OrderItemEntity createOrderItem(OrderItemRequest request){
         ProductEntity product = productService.getById(request.productId);
 

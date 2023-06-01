@@ -1,6 +1,8 @@
 package pl.barwinski.restaurantbackend.core.order;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.id.GUIDGenerator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import pl.barwinski.restaurantbackend.core.user.UserService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -23,8 +26,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserService userService;
     private final OrderItemService orderItemService;
-    private final AddressService addressService;
-    private final ProductService productService;
 
     public OrderEntity save(OrderEntity order) {
         return orderRepository.save(order);
@@ -34,25 +35,33 @@ public class OrderService {
         return orderRepository.findById(id).orElseThrow();
     }
 
+    public OrderEntity getOrder(UUID publicId) {
+        return orderRepository.findByPublicId(publicId).orElseThrow();
+    }
+
     public Page<OrderEntity> getOrders(Pageable pageable) {
         return orderRepository.findAllByOrderByOrderDateDesc(pageable);
     }
 
-    public void deleteOrder(Long id) {
-        orderRepository.deleteById(id);
+    @Transactional
+    public void deleteOrder(UUID publicId) {
+        orderRepository.deleteByPublicId(publicId);
     }
 
-    public OrderEntity updateOrderStatus(Long id, OrderEntity.OrderStatus status) {
-        OrderEntity order = getOrder(id);
+    public OrderEntity updateOrderStatus(UUID publicId, OrderEntity.OrderStatus status) {
+        OrderEntity order = getOrder(publicId);
         order.setStatus(status);
         return save(order);
     }
 
-    public OrderEntity createClientOrder(OrderRequest orderRequest){
+    @Transactional
+    public OrderEntity createClientOrder(String email, OrderRequest orderRequest){
         OrderEntity order = new OrderEntity();
+        order.setPublicId(java.util.UUID.randomUUID());
 
-        UserEntity user = userService.getByEmail(orderRequest.email);
-        AddressEntity address = addressService.getById(orderRequest.addressId);
+
+        UserEntity user = userService.getByEmail(email);
+        AddressEntity address = user.getAddresses().get(0);
 
         order.setUser(user);
         order.setAddress(address);
@@ -62,6 +71,7 @@ public class OrderService {
 
         for (OrderItemRequest orderItemRequest : orderRequest.orderItems) {
             OrderItemEntity orderItem = orderItemService.createOrderItem(orderItemRequest);
+            orderItem.setOrder(order);
 
             orderItemEntities.add(orderItem);
             totalPrice = totalPrice.add(orderItem.getPrice());

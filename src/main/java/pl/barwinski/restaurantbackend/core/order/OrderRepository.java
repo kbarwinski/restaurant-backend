@@ -6,6 +6,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface OrderRepository extends PagingAndSortingRepository<OrderEntity, Long> {
@@ -17,4 +18,8 @@ public interface OrderRepository extends PagingAndSortingRepository<OrderEntity,
     Optional<OrderEntity> findById(Long id);
 
     void deleteById(Long id);
+
+    Optional<OrderEntity> findByPublicId(UUID publicId);
+
+    void deleteByPublicId(UUID publicId);
 }
