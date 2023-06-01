@@ -2,7 +2,6 @@ package pl.barwinski.restaurantbackend.core.product;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +12,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ProductService {
-
+public class ProductService{
     private final ProductRepository productRepository;
 
     public ProductEntity save(ProductEntity product) {
@@ -32,6 +30,10 @@ public class ProductService {
     public ProductEntity getById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(NoSuchElementException::new);
+    }
+
+    public List<ProductEntity> getAll() {
+        return productRepository.findAll();
     }
 
 }

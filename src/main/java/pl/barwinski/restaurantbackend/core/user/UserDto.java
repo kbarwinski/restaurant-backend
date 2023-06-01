@@ -7,10 +7,7 @@ import java.util.ArrayList;
 
 public class UserDto {
     public String email;
-
     public String userRole;
-
     public ContactDto contact;
-
     public ArrayList<AddressDto> addresses;
 }

@@ -35,7 +35,7 @@ public class ContactEntity {
     @Length(max = 20)
     private String phoneNumber;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user.id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private UserEntity user;
 }
