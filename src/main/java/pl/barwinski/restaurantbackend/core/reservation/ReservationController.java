@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import pl.barwinski.restaurantbackend.core.reservationtable.ReservationTableDto;
 import pl.barwinski.restaurantbackend.core.reservationtable.ReservationTableEntity;
@@ -35,6 +37,15 @@ public class ReservationController {
         return ResponseEntity.ok(reservationDto);
     }
 
+    @GetMapping(path = EndpointPaths.EMPLOYEE + EndpointPaths.RESERVATION)
+    @Operation(summary = "Get all reservations", description = "Retrieve a list of all reservations")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved reservations")
+    public ResponseEntity<List<ReservationDto>> getReservations() {
+        List<ReservationEntity> reservations = reservationService.getReservations();
+        List<ReservationDto> reservationDtos = reservationMapper.mapToDto(reservations);
+        return ResponseEntity.ok(reservationDtos);
+    }
+
     @PostMapping(path = EndpointPaths.CLIENT + EndpointPaths.RESERVATION)
     @Operation(summary = "Create a new reservation", description = "Create a new reservation based on the request body")
     @ApiResponse(responseCode = "201", description = "Reservation created")
@@ -42,7 +53,10 @@ public class ReservationController {
             @ApiResponse(responseCode = "400", description = "Bad request")
     })
     public ResponseEntity<ReservationDto> createReservation(@RequestBody ReservationRequest request) {
-        ReservationEntity createdReservation = reservationService.reserveTable(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        ReservationEntity createdReservation = reservationService.reserveTable(email,request);
         ReservationDto reservationDto = reservationMapper.mapToDto(createdReservation);
         return ResponseEntity.status(HttpStatus.CREATED).body(reservationDto);
     }
@@ -56,6 +70,19 @@ public class ReservationController {
     public ResponseEntity<Void> deleteReservation(@PathVariable Long id) {
         reservationService.deleteReservationById(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping(path = EndpointPaths.CLIENT + EndpointPaths.RESERVATION + "/tables")
+    @Operation(summary = "Get available tables for reservation", description = "Retrieve a list of all tables")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved tables")
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Bad request")
+    })
+    public ResponseEntity<List<ReservationTableDto>> getAllTables() {
+        List<ReservationTableEntity> availableTables = reservationService.getAllTables();
+        List<ReservationTableDto> tableDtos = reservationTableMapper.mapToDto(availableTables);
+        return ResponseEntity.ok(tableDtos);
     }
 
     @GetMapping(path = EndpointPaths.CLIENT + EndpointPaths.RESERVATION + "/available-tables")

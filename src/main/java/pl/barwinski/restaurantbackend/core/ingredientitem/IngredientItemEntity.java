@@ -26,7 +26,7 @@ public class IngredientItemEntity {
     @JoinColumn(name = "ingredient_id")
     private IngredientEntity ingredient;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private ProductEntity product;
 

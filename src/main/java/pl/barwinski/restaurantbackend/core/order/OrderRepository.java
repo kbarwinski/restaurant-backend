@@ -11,13 +11,10 @@ import java.util.UUID;
 @Repository
 public interface OrderRepository extends PagingAndSortingRepository<OrderEntity, Long> {
     Page<OrderEntity> findAllByOrderByOrderDateDesc(Pageable pageable);
-    Page<OrderEntity> findAllByUserId(Long userId, Pageable pageable);
 
     OrderEntity save(OrderEntity order);
 
     Optional<OrderEntity> findById(Long id);
-
-    void deleteById(Long id);
 
     Optional<OrderEntity> findByPublicId(UUID publicId);
 

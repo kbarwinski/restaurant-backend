@@ -10,6 +10,10 @@ import java.util.List;
 public class ReservationTableService {
     private final ReservationTableRepository reservationTableRepository;
 
+    public ReservationTableEntity save(ReservationTableEntity reservationTable){
+        return reservationTableRepository.save(reservationTable);
+    }
+
     public ReservationTableEntity getReservationTableById(long id){
         return reservationTableRepository.findById(id).orElseThrow();
     }

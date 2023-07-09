@@ -9,6 +9,7 @@ import pl.barwinski.restaurantbackend.core.user.UserEntity;
 import pl.barwinski.restaurantbackend.core.user.UserService;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -27,12 +28,15 @@ public class ReservationService {
     }
 
     public List<ReservationTableEntity> getAvailableTables(LocalDateTime startDate, LocalDateTime endDate){
-        List<ReservationEntity> reservations = getReservationsBetween(startDate, endDate);
-        List<ReservationTableEntity> allTables = reservationTableService.getAll();
-        for (ReservationEntity reservation : reservations) {
-            allTables.remove(reservation.getReservationTable());
-        }
-        return allTables;
+        List<ReservationTableEntity> reservedTables = getReservationsBetween(startDate, endDate)
+                .stream()
+                .map(ReservationEntity::getReservationTable)
+                .distinct()
+                .toList();
+
+        List<ReservationTableEntity> availableTables = reservationTableService.getAll();
+        availableTables.removeAll(reservedTables);
+        return availableTables;
     }
 
     public ReservationEntity getReservationById(long id){
@@ -45,7 +49,7 @@ public class ReservationService {
         return reservation;
     }
 
-    public ReservationEntity reserveTable(ReservationRequest request){
+    public ReservationEntity reserveTable(String email, ReservationRequest request){
         ReservationEntity reservation = new ReservationEntity();
 
         ReservationTableEntity table = reservationTableService.getReservationTableById(request.reservationTableId);
@@ -58,9 +62,17 @@ public class ReservationService {
         reservation.setStartDateTime(request.startDateTime);
         reservation.setEndDateTime(request.endDateTime);
 
-        UserEntity user = userService.getById(request.userId);
+        UserEntity user = userService.getByEmail(email);
         reservation.setUser(user);
 
         return reservationRepository.save(reservation);
+    }
+
+    public List<ReservationTableEntity> getAllTables() {
+        return reservationTableService.getAll();
+    }
+
+    public List<ReservationEntity> getReservations() {
+        return reservationRepository.findAll();
     }
 }

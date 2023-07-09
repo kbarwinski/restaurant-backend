@@ -13,7 +13,7 @@ import pl.barwinski.restaurantbackend.utils.EndpointPaths;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = EndpointPaths.BASE)
+@RequestMapping(path = EndpointPaths.BASE + EndpointPaths.EMPLOYEE)
 @Tag(name = "Ingredients")
 @RequiredArgsConstructor
 public class IngredientController {
@@ -40,12 +40,22 @@ public class IngredientController {
         return ResponseEntity.ok(ingredientDtos);
     }
 
-    @GetMapping(path = EndpointPaths.INGREDIENT + "/stock-desc")
-    @Operation(summary = "Get all ingredients sorted by stock in descending order", description = "Retrieve a list of all ingredients sorted by stock in descending order")
-    public ResponseEntity<List<IngredientDto>> getAllIngredientsByStockDesc() {
-        List<IngredientEntity> ingredients = ingredientService.getAllByStockDesc();
+    @GetMapping(path = EndpointPaths.INGREDIENT + "/stock-asc")
+    @Operation(summary = "Get all ingredients sorted by stock in ascending order", description = "Retrieve a list of all ingredients sorted by stock in ascending order")
+    public ResponseEntity<List<IngredientDto>> getAllIngredientsByStockAsc() {
+        List<IngredientEntity> ingredients = ingredientService.getAllByStockAsc();
         List<IngredientDto> ingredientDtos = ingredientMapper.mapToDto(ingredients);
         return ResponseEntity.ok(ingredientDtos);
+    }
+
+    @PutMapping(path = EndpointPaths.INGREDIENT + "/{id}")
+    @Operation(summary = "Update ingredient by ID", description = "Update an ingredient by its ID")
+    @ApiResponse(responseCode = "200", description = "Ingredient updated")
+    public ResponseEntity<IngredientDto> updateIngredient(@PathVariable Long id, @RequestBody IngredientDto ingredientDto) {
+        IngredientEntity ingredient = ingredientMapper.mapToEntity(ingredientDto);
+        IngredientEntity updatedIngredient = ingredientService.update(id,ingredient);
+        IngredientDto updatedIngredientDto = ingredientMapper.mapToDto(updatedIngredient);
+        return ResponseEntity.ok(updatedIngredientDto);
     }
 
     @PostMapping(path = EndpointPaths.INGREDIENT)

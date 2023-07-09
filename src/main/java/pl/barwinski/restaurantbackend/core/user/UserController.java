@@ -35,7 +35,7 @@ public class UserController {
     })
     public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
         try {
-            LoginModel ret = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
+            LoginDto ret = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
             return ResponseEntity.ok(ret);
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
@@ -43,6 +43,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong password");
         }
     }
+
     @PostMapping(path = EndpointPaths.USER + "/register")
     @Operation(summary = "Register user", responses = {
             @ApiResponse(responseCode = "200", description = "Successfully registered")

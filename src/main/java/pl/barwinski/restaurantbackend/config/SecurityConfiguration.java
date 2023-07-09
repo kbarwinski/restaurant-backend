@@ -57,7 +57,7 @@ public class SecurityConfiguration {
                 .cors().and()
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**","/authsocket").permitAll()
                         .requestMatchers(EndpointPaths.BASE + EndpointPaths.ADMIN + "/**").hasRole(adminRole)
                         .requestMatchers(EndpointPaths.BASE + EndpointPaths.EMPLOYEE + "/**").hasAnyRole(employeeRole, adminRole)
                         .requestMatchers(EndpointPaths.BASE + EndpointPaths.CLIENT + "/**").hasAnyRole(clientRole, employeeRole, adminRole)

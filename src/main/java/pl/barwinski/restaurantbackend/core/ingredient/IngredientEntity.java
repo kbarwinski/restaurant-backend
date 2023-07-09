@@ -5,8 +5,10 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import pl.barwinski.restaurantbackend.core.ingredientitem.IngredientItemEntity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -51,4 +53,7 @@ public class IngredientEntity {
 
     @NotNull
     private BigDecimal stock;
+
+    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<IngredientItemEntity> ingredientItems;
 }

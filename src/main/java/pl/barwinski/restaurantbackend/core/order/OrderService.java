@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.barwinski.restaurantbackend.core.address.AddressEntity;
 import pl.barwinski.restaurantbackend.core.address.AddressService;
+import pl.barwinski.restaurantbackend.core.ingredientitem.IngredientItemService;
 import pl.barwinski.restaurantbackend.core.orderitem.OrderItemEntity;
 import pl.barwinski.restaurantbackend.core.orderitem.OrderItemRequest;
 import pl.barwinski.restaurantbackend.core.orderitem.OrderItemService;
@@ -26,6 +27,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserService userService;
     private final OrderItemService orderItemService;
+    private final IngredientItemService ingredientItemService;
 
     public OrderEntity save(OrderEntity order) {
         return orderRepository.save(order);
@@ -50,6 +52,16 @@ public class OrderService {
 
     public OrderEntity updateOrderStatus(UUID publicId, OrderEntity.OrderStatus status) {
         OrderEntity order = getOrder(publicId);
+
+        if(order.getStatus() == OrderEntity.OrderStatus.COMPLETED || order.getStatus() == OrderEntity.OrderStatus.CANCELLED)
+            throw new IllegalStateException("Order status cannot be changed");
+
+        if(status == OrderEntity.OrderStatus.COMPLETED || status == OrderEntity.OrderStatus.CANCELLED){
+            order.setCompletionDate(LocalDateTime.now());
+            if(status == OrderEntity.OrderStatus.COMPLETED)
+                ingredientItemService.subtractIngredientsFromStock(order);
+        }
+
         order.setStatus(status);
         return save(order);
     }
@@ -58,7 +70,6 @@ public class OrderService {
     public OrderEntity createClientOrder(String email, OrderRequest orderRequest){
         OrderEntity order = new OrderEntity();
         order.setPublicId(java.util.UUID.randomUUID());
-
 
         UserEntity user = userService.getByEmail(email);
         AddressEntity address = user.getAddresses().get(0);
@@ -69,7 +80,7 @@ public class OrderService {
         ArrayList<OrderItemEntity> orderItemEntities = new ArrayList<>();
         BigDecimal totalPrice = BigDecimal.ZERO;
 
-        for (OrderItemRequest orderItemRequest : orderRequest.orderItems) {
+        for (OrderItemRequest orderItemRequest : orderRequest.orderItems){
             OrderItemEntity orderItem = orderItemService.createOrderItem(orderItemRequest);
             orderItem.setOrder(order);
 

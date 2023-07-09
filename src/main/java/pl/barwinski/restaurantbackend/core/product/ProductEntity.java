@@ -6,8 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import pl.barwinski.restaurantbackend.core.ingredientitem.IngredientItemEntity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -49,4 +51,7 @@ public class ProductEntity {
     @Min(0)
     private BigDecimal price;
 
+    @NotNull
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<IngredientItemEntity> recipe;
 }

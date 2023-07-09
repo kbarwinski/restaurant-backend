@@ -16,8 +16,8 @@ public class IngredientService {
         return ingredientRepository.findAll();
     }
 
-    public List<IngredientEntity> getAllByStockDesc() {
-        return ingredientRepository.findAllByOrderByStockDesc();
+    public List<IngredientEntity> getAllByStockAsc() {
+        return ingredientRepository.findAllByOrderByStockAsc();
     }
 
     public IngredientEntity save(IngredientEntity ingredient) {
@@ -25,5 +25,14 @@ public class IngredientService {
     }
     public void deleteById(Long id) {
         ingredientRepository.deleteById(id);
+    }
+
+    public IngredientEntity update(Long id, IngredientEntity ingredient) {
+        IngredientEntity ingredientToUpdate = ingredientRepository.findById(id).orElseThrow();
+        ingredientToUpdate.setName(ingredient.getName());
+        ingredientToUpdate.setCategory(ingredient.getCategory());
+        ingredientToUpdate.setMeasure(ingredient.getMeasure());
+        ingredientToUpdate.setStock(ingredient.getStock());
+        return ingredientRepository.save(ingredientToUpdate);
     }
 }

@@ -56,4 +56,55 @@ public class ProductController {
 
         return ResponseEntity.ok(productDtos);
     }
+
+    @GetMapping(path = EndpointPaths.EMPLOYEE + EndpointPaths.PRODUCT + "/eager")
+    @Operation(summary = "Get all products with eager recipe", description = "Retrieve a list of all products with eager recipe")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved products")
+    public ResponseEntity<List<ProductDto>>getProductsWithEagerRecipe(Pageable page){
+        Page<ProductEntity> products = productService.findAllWithEagerRecipe(page);
+        List<ProductDto> productDtos = productMapper.mapToDto(products.toList());
+        return ResponseEntity.ok(productDtos);
+    }
+
+    @GetMapping(path = EndpointPaths.PRODUCT + "/{id}")
+    @Operation(summary = "Get product by id", description = "Retrieve a product by id")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved product")
+    public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
+        ProductEntity product = productService.getById(id);
+        ProductDto productDto = productMapper.mapToDto(product);
+
+        return ResponseEntity.ok(productDto);
+    }
+
+    @PostMapping(path = EndpointPaths.EMPLOYEE + EndpointPaths.PRODUCT)
+    @Operation(summary = "Create product", description = "Create a new product")
+    @ApiResponse(responseCode = "201", description = "Successfully created product")
+    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
+        ProductEntity product = productMapper.mapToEntity(productDto);
+        ProductEntity createdProduct = productService.save(product);
+        ProductDto createdProductDto = productMapper.mapToDto(createdProduct);
+
+        return ResponseEntity.ok(createdProductDto);
+    }
+
+    @PutMapping(path = EndpointPaths.EMPLOYEE + EndpointPaths.PRODUCT + "/{id}")
+    @Operation(summary = "Update product", description = "Update an existing product")
+    @ApiResponse(responseCode = "200", description = "Successfully updated product")
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable Long id, @RequestBody ProductDto productDto) {
+        ProductEntity product = productMapper.mapToEntity(productDto);
+        ProductEntity updatedProduct = productService.update(id, product);
+        ProductDto updatedProductDto = productMapper.mapToDto(updatedProduct);
+
+        return ResponseEntity.ok(updatedProductDto);
+    }
+
+    @DeleteMapping(path = EndpointPaths.EMPLOYEE + EndpointPaths.PRODUCT + "/{id}")
+    @Operation(summary = "Delete product", description = "Delete an existing product")
+    @ApiResponse(responseCode = "200", description = "Successfully deleted product")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        productService.deleteById(id);
+
+        return ResponseEntity.ok().build();
+    }
+
 }

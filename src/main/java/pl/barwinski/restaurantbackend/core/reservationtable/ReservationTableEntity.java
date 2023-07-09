@@ -25,5 +25,9 @@ public class ReservationTableEntity {
 
     @NotNull
     @Min(1)
+    private int number;
+
+    @NotNull
+    @Min(1)
     private int seats;
 }
